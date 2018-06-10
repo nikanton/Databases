@@ -1,4 +1,4 @@
---1 Свойства, которые есть у всех групп
+--1 РЎРІРѕР№СЃС‚РІР°, РєРѕС‚РѕСЂС‹Рµ РµСЃС‚СЊ Сѓ РІСЃРµС… РіСЂСѓРїРї
 DECLARE @groupsCount int = (
 	SELECT COUNT(*)
 	FROM Users
@@ -11,52 +11,52 @@ WHERE U.Grp = 1
 GROUP BY PropID
 HAVING COUNT(*) = @groupsCount
 
---2 Статистика новостей и комментариев по датам
-SELECT CONVERT(date, Дата), SUM(Новости) 'Количество новостей', SUM(Комментарии) 'Количество комментариев'
+--2 РЎС‚Р°С‚РёСЃС‚РёРєР° РЅРѕРІРѕСЃС‚РµР№ Рё РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ РїРѕ РґР°С‚Р°Рј
+SELECT CONVERT(date, Р”Р°С‚Р°), SUM(РќРѕРІРѕСЃС‚Рё) 'РљРѕР»РёС‡РµСЃС‚РІРѕ РЅРѕРІРѕСЃС‚РµР№', SUM(РљРѕРјРјРµРЅС‚Р°СЂРёРё) 'РљРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ'
 FROM (
-SELECT Date_of_comments Дата, 0 Новости, COUNT(*) Комментарии
+SELECT Date_of_comments Р”Р°С‚Р°, 0 РќРѕРІРѕСЃС‚Рё, COUNT(*) РљРѕРјРјРµРЅС‚Р°СЂРёРё
 FROM News_comments
 GROUP BY Date_of_comments
 UNION
-SELECT Date_of_news Дата, COUNT(*) Новости, 0 Комментарии
+SELECT Date_of_news Р”Р°С‚Р°, COUNT(*) РќРѕРІРѕСЃС‚Рё, 0 РљРѕРјРјРµРЅС‚Р°СЂРёРё
 FROM News
 GROUP BY Date_of_news
 ) AS Tab
-GROUP BY CONVERT(date, Дата)
+GROUP BY CONVERT(date, Р”Р°С‚Р°)
 
---3 Гистаграмма для числа пользовотелей по числу новостей
+--3 Р“РёСЃС‚Р°РіСЂР°РјРјР° РґР»СЏ С‡РёСЃР»Р° РїРѕР»СЊР·РѕРІРѕС‚РµР»РµР№ РїРѕ С‡РёСЃР»Сѓ РЅРѕРІРѕСЃС‚РµР№
 DECLARE @step int = 5
 
-SELECT (Колво_новостей / @step) * @step Новостей_от, (Колво_новостей / @step + 1) * @step Новостей_до, COUNT(*) Колво
+SELECT (РљРѕР»РІРѕ_РЅРѕРІРѕСЃС‚РµР№ / @step) * @step РќРѕРІРѕСЃС‚РµР№_РѕС‚, (РљРѕР»РІРѕ_РЅРѕРІРѕСЃС‚РµР№ / @step + 1) * @step РќРѕРІРѕСЃС‚РµР№_РґРѕ, COUNT(*) РљРѕР»РІРѕ
 FROM (
-SELECT U.UserID, COUNT(NewsID) Колво_новостей
+SELECT U.UserID, COUNT(NewsID) РљРѕР»РІРѕ_РЅРѕРІРѕСЃС‚РµР№
 FROM Users AS U LEFT JOIN News AS N ON U.UserID = N.UserID
 GROUP BY U.UserID
 ) AS T
-GROUP BY Колво_новостей / @step
+GROUP BY РљРѕР»РІРѕ_РЅРѕРІРѕСЃС‚РµР№ / @step
 
---4 Level_ID, под которыми UserID никогда не публиковал
+--4 Level_ID, РїРѕРґ РєРѕС‚РѕСЂС‹РјРё UserID РЅРёРєРѕРіРґР° РЅРµ РїСѓР±Р»РёРєРѕРІР°Р»
 SELECT DISTINCT N.UserID, V.Level_ID
 FROM News AS N CROSS JOIN Visibility_levels AS V
 EXCEPT
 SELECT DISTINCT UserID, Level_ID
 FROM News
 
---5 Без комментариев после 01-05-2017
+--5 Р‘РµР· РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ РїРѕСЃР»Рµ 01-05-2017
 SELECT DISTINCT N.UserID, V.Level_ID
 FROM News AS N CROSS JOIN Visibility_levels AS V
 EXCEPT
 SELECT DISTINCT C.Comment_UserID, N.Level_ID
 FROM News_comment AS C JOIN News AS N ON (C.NewsID = N.NewsID AND C.Date_of_comments > 2017-05-01)
 
---6 Уровни видимости с числом публикаций менее 5
-SELECT V.Level_ID, V.Level, COUNT(N.NewsID) 'Колво новостей', COUNT(DISTINCT N.UserID) 'Колво уникальных пользователей'
+--6 РЈСЂРѕРІРЅРё РІРёРґРёРјРѕСЃС‚Рё СЃ С‡РёСЃР»РѕРј РїСѓР±Р»РёРєР°С†РёР№ РјРµРЅРµРµ 5
+SELECT V.Level_ID, V.Level, COUNT(N.NewsID) 'РљРѕР»РІРѕ РЅРѕРІРѕСЃС‚РµР№', COUNT(DISTINCT N.UserID) 'РљРѕР»РІРѕ СѓРЅРёРєР°Р»СЊРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№'
 FROM News N JOIN Visibility_levels V ON N.Level_ID = V.Level_ID
 GROUP BY V.Level_ID, V.Level
 HAVING COUNT(N.NewsID) < 5
 
---7 Промежутки без новостей
-DECLARE @dates TABLE(Дата date)
+--7 РџСЂРѕРјРµР¶СѓС‚РєРё Р±РµР· РЅРѕРІРѕСЃС‚РµР№
+DECLARE @dates TABLE(Р”Р°С‚Р° date)
 
 DECLARE @date date = '2017-04-01'
 WHILE @date <= '2017-05-01'
@@ -65,11 +65,11 @@ WHILE @date <= '2017-05-01'
 		SET @date = DATEADD(day, 1, @date)
 	END
 
-SELECT MIN(Дата), MAX(Дата)
+SELECT MIN(Р”Р°С‚Р°), MAX(Р”Р°С‚Р°)
 FROM (
-SELECT Дата, DATEADD(day, -1*ROW_NUMBER() OVER(ORDER BY Дата), Дата) grp
+SELECT Р”Р°С‚Р°, DATEADD(day, -1*ROW_NUMBER() OVER(ORDER BY Р”Р°С‚Р°), Р”Р°С‚Р°) grp
 FROM(
-SELECT Дата
+SELECT Р”Р°С‚Р°
 FROM
 @dates
 EXCEPT
@@ -78,7 +78,7 @@ FROM News
 ) AS Tab ) AS Tab
 GROUP BY grp
 
---8 Подписчики второго уровня
+--8 РџРѕРґРїРёСЃС‡РёРєРё РІС‚РѕСЂРѕРіРѕ СѓСЂРѕРІРЅСЏ
 DECLARE @user int = 1
 
 SELECT DISTINCT @user, S2.UserID
