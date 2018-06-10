@@ -1,18 +1,18 @@
---1 Вывод матрицы
+--1 Р’С‹РІРѕРґ РјР°С‚СЂРёС†С‹
 DECLARE @ID int = 1
 
-SELECT ID as 'Идентификатор матрицы', X as 'Номер столбца', Y as 'Номер строки', val as 'Значение'
+SELECT ID as 'РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјР°С‚СЂРёС†С‹', X as 'РќРѕРјРµСЂ СЃС‚РѕР»Р±С†Р°', Y as 'РќРѕРјРµСЂ СЃС‚СЂРѕРєРё', val as 'Р—РЅР°С‡РµРЅРёРµ'
 FROM Matrix
 WHERE ID = @ID
 
---2 Вывод транспонированной матрицы
+--2 Р’С‹РІРѕРґ С‚СЂР°РЅСЃРїРѕРЅРёСЂРѕРІР°РЅРЅРѕР№ РјР°С‚СЂРёС†С‹
 DECLARE @ID int = 1
 
-SELECT ID as 'Идентификатор матрицы', Y as 'Номер столбца', X as 'Номер строки', val as 'Значение'
+SELECT ID as 'РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РјР°С‚СЂРёС†С‹', Y as 'РќРѕРјРµСЂ СЃС‚РѕР»Р±С†Р°', X as 'РќРѕРјРµСЂ СЃС‚СЂРѕРєРё', val as 'Р—РЅР°С‡РµРЅРёРµ'
 FROM Matrix
 WHERE ID = @ID
 
---3 Проверка на симметричность
+--3 РџСЂРѕРІРµСЂРєР° РЅР° СЃРёРјРјРµС‚СЂРёС‡РЅРѕСЃС‚СЊ
 CREATE PROCEDURE 
 IsSymmetric
 	@ID AS int,
@@ -25,7 +25,7 @@ AS
 		WHERE orgn.val <> transp.val
 	)
 
---4 Вывод матрицы, умноженной на число
+--4 Р’С‹РІРѕРґ РјР°С‚СЂРёС†С‹, СѓРјРЅРѕР¶РµРЅРЅРѕР№ РЅР° С‡РёСЃР»Рѕ
 CREATE FUNCTION
 MultiplyFloat (@ID int, @number float)
 RETURNS @Multiplied TABLE (X int, Y int, val float)
@@ -38,7 +38,7 @@ BEGIN
 RETURN
 END
 
---5 Проверяем является ли матрица вектором
+--5 РџСЂРѕРІРµСЂСЏРµРј СЏРІР»СЏРµС‚СЃСЏ Р»Рё РјР°С‚СЂРёС†Р° РІРµРєС‚РѕСЂРѕРј
 CREATE FUNCTION
 IsVector (@ID int)
 RETURNS int
@@ -52,7 +52,7 @@ BEGIN
 	)
 END
 
---6 Выводит является ли квадратной (да/нет)
+--6 Р’С‹РІРѕРґРёС‚ СЏРІР»СЏРµС‚СЃСЏ Р»Рё РєРІР°РґСЂР°С‚РЅРѕР№ (РґР°/РЅРµС‚)
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -85,9 +85,9 @@ GO
 
 DECLARE @ID int = 1
 
-SELECT CASE WHEN dbo.SizeX(@ID) = dbo.SizeY(@ID) THEN 'да' ELSE 'нет' END as 'Результат'
+SELECT CASE WHEN dbo.SizeX(@ID) = dbo.SizeY(@ID) THEN 'РґР°' ELSE 'РЅРµС‚' END as 'Р РµР·СѓР»СЊС‚Р°С‚'
 
---7 Выводит можно ли сложить две матрицы (да/нет)
+--7 Р’С‹РІРѕРґРёС‚ РјРѕР¶РЅРѕ Р»Рё СЃР»РѕР¶РёС‚СЊ РґРІРµ РјР°С‚СЂРёС†С‹ (РґР°/РЅРµС‚)
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -117,9 +117,9 @@ GO
 DECLARE @ID1 int = 1
 DECLARE @ID2 int = 2
 
-SELECT CASE WHEN dbo.SizeX(@ID1) = dbo.SizeX(@ID2) AND dbo.SizeY(@ID1) = dbo.SizeY(@ID2) THEN 'да' ELSE 'нет' END  as 'Результат'
+SELECT CASE WHEN dbo.SizeX(@ID1) = dbo.SizeX(@ID2) AND dbo.SizeY(@ID1) = dbo.SizeY(@ID2) THEN 'РґР°' ELSE 'РЅРµС‚' END  as 'Р РµР·СѓР»СЊС‚Р°С‚'
 
---8 Вывод суммы матриц
+--8 Р’С‹РІРѕРґ СЃСѓРјРјС‹ РјР°С‚СЂРёС†
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -150,11 +150,11 @@ DECLARE @ID1 int = 1
 DECLARE @ID2 int = 2
 
 IF dbo.SizeX(@ID1) = dbo.SizeX(@ID2) AND dbo.SizeY(@ID1) = dbo.SizeY(@ID2) (
-SELECT fir.X  as 'Номер строки', fir.Y as 'Номер столбца', fir.val + sec.val as 'Значение'
+SELECT fir.X  as 'РќРѕРјРµСЂ СЃС‚СЂРѕРєРё', fir.Y as 'РќРѕРјРµСЂ СЃС‚РѕР»Р±С†Р°', fir.val + sec.val as 'Р—РЅР°С‡РµРЅРёРµ'
 FROM Matrix as fir JOIN Matrix as sec ON (fir.ID = @ID1 AND sec.ID = @ID2 AND fir.X = sec.X AND fir.Y = sec.Y)
 )
 
---9 Проверка на возможность перемножения (да/нет)
+--9 РџСЂРѕРІРµСЂРєР° РЅР° РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РїРµСЂРµРјРЅРѕР¶РµРЅРёСЏ (РґР°/РЅРµС‚)
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -184,9 +184,9 @@ GO
 DECLARE @ID1 int = 1
 DECLARE @ID2 int = 2
 
-SELECT CASE WHEN dbo.SizeX(@ID1) = dbo.SizeY(@ID2) THEN 'да' ELSE 'нет' END  as 'Результат'
+SELECT CASE WHEN dbo.SizeX(@ID1) = dbo.SizeY(@ID2) THEN 'РґР°' ELSE 'РЅРµС‚' END  as 'Р РµР·СѓР»СЊС‚Р°С‚'
 
---10 Перемножение матриц
+--10 РџРµСЂРµРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -222,14 +222,14 @@ IF dbo.SizeX(@ID1) = dbo.SizeY(@ID2)(
 	GROUP BY sec.X, fir.Y
 )
 
---11 Нечётные строки и чётные столбцы
+--11 РќРµС‡С‘С‚РЅС‹Рµ СЃС‚СЂРѕРєРё Рё С‡С‘С‚РЅС‹Рµ СЃС‚РѕР»Р±С†С‹
 DECLARE @ID int = 1
 
 SELECT X / 2 as X, (Y + 1) / 2 as Y, val
 FROM Matrix
 WHERE ID = @ID AND X % 2 = 0 AND Y % 2 = 1
 
---12 Уравнение с ортоганальной матрицей
+--12 РЈСЂР°РІРЅРµРЅРёРµ СЃ РѕСЂС‚РѕРіР°РЅР°Р»СЊРЅРѕР№ РјР°С‚СЂРёС†РµР№
 CREATE FUNCTION
 SizeX (@ID int)
 RETURNS int
@@ -265,8 +265,8 @@ IF dbo.SizeY(@A) = dbo.SizeY(@B)(
 	GROUP BY sec.X, fir.X
 )
 
---13 Значения в выбранных ячейках
-DECLARE @D int = 3 --ID матрицы с координатами в таблице
+--13 Р—РЅР°С‡РµРЅРёСЏ РІ РІС‹Р±СЂР°РЅРЅС‹С… СЏС‡РµР№РєР°С…
+DECLARE @D int = 3 --ID РјР°С‚СЂРёС†С‹ СЃ РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё РІ С‚Р°Р±Р»РёС†Рµ
 
 DECLARE @T TABLE (X int, Y int)
 INSERT INTO @T
